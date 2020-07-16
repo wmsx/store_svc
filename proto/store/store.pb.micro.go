@@ -35,6 +35,7 @@ var _ server.Option
 
 type StoreService interface {
 	SaveStoreInfo(ctx context.Context, in *SaveStoreInfoRequest, opts ...client.CallOption) (*SaveStoreInfoResponse, error)
+	GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, opts ...client.CallOption) (*GetByObjectIdsResponse, error)
 }
 
 type storeService struct {
@@ -59,15 +60,27 @@ func (c *storeService) SaveStoreInfo(ctx context.Context, in *SaveStoreInfoReque
 	return out, nil
 }
 
+func (c *storeService) GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, opts ...client.CallOption) (*GetByObjectIdsResponse, error) {
+	req := c.c.NewRequest(c.name, "Store.GetByObjectIds", in)
+	out := new(GetByObjectIdsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Store service
 
 type StoreHandler interface {
 	SaveStoreInfo(context.Context, *SaveStoreInfoRequest, *SaveStoreInfoResponse) error
+	GetByObjectIds(context.Context, *GetByObjectIdsRequest, *GetByObjectIdsResponse) error
 }
 
 func RegisterStoreHandler(s server.Server, hdlr StoreHandler, opts ...server.HandlerOption) error {
 	type store interface {
 		SaveStoreInfo(ctx context.Context, in *SaveStoreInfoRequest, out *SaveStoreInfoResponse) error
+		GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, out *GetByObjectIdsResponse) error
 	}
 	type Store struct {
 		store
@@ -82,4 +95,8 @@ type storeHandler struct {
 
 func (h *storeHandler) SaveStoreInfo(ctx context.Context, in *SaveStoreInfoRequest, out *SaveStoreInfoResponse) error {
 	return h.StoreHandler.SaveStoreInfo(ctx, in, out)
+}
+
+func (h *storeHandler) GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, out *GetByObjectIdsResponse) error {
+	return h.StoreHandler.GetByObjectIds(ctx, in, out)
 }

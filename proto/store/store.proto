@@ -5,10 +5,27 @@ package go.micro.service.store_svc;
 service Store {
     rpc SaveStoreInfo (SaveStoreInfoRequest) returns (SaveStoreInfoResponse) {
     }
+    rpc GetByObjectIds (GetByObjectIdsRequest) returns (GetByObjectIdsResponse) {
+    }
 }
 
 message ErrorMsg {
     string msg = 1;
+}
+
+
+message GetByObjectIdsRequest {
+    repeated int64 objectIds = 1;
+}
+
+message GetByObjectIdsResponse {
+    repeated ObjectInfo objectInfos = 1;
+}
+
+message ObjectInfo {
+    int64 id = 1;
+    string bulk = 2;
+    string objectName =  3;
 }
 
 message SaveStoreInfoRequest {
