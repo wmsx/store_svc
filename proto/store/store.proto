@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package go.micro.service.store_svc;
+
+service Store {
+    rpc SaveStoreInfo (SaveStoreInfoRequest) returns (SaveStoreInfoResponse) {
+    }
+}
+
+message ErrorMsg {
+    string msg = 1;
+}
+
+message SaveStoreInfoRequest {
+    repeated StoreInfo storeInfos = 1;
+}
+
+message StoreInfo {
+    string filename = 1;
+    string bulkName = 2;
+    string objectName = 3;
+    int64 size = 4;
+    int32 width = 5;
+    int32 height = 6;
+}
+
+message SaveStoreInfoResponse {
+    map<string, int64> name2IdMap = 1;
+    ErrorMsg errorMsg = 999;
+}
