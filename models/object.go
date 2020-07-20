@@ -17,3 +17,13 @@ func BatchAddObject(objects []Object) error  {
 	}
 	return db.Create(&objects).Error
 }
+
+func GetObjectsById(ids []int64) ([]*Object, error) {
+	var objects []*Object
+	err := db.Where("id in (?)", ids).Find(&objects).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return objects, nil
+
+}

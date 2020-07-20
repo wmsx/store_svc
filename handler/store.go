@@ -2,13 +2,38 @@ package handler
 
 import (
 	"context"
+	"github.com/micro/go-micro/v2/util/log"
 	"github.com/wmsx/store_svc/models"
 	proto "github.com/wmsx/store_svc/proto/store"
 )
 
 type StoreHandler struct{}
 
-func (s *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
+func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
+	req *proto.GetByObjectIdsRequest, res *proto.GetByObjectIdsResponse) error {
+	var (
+		objects []*models.Object
+		err error
+	)
+	if objects, err = models.GetObjectsById(req.ObjectIds); err != nil {
+		log.Error("根据id查询object失败 err: ", err)
+		return err
+	}
+
+	objectInfos := make([]*proto.ObjectInfo, 0)
+	for _, object := range objects{
+		objectInfo := &proto.ObjectInfo{
+			Id:         int64(object.ID),
+			Bulk:       object.Bulk,
+			ObjectName: object.ObjectName,
+		}
+		objectInfos = append(objectInfos, objectInfo)
+	}
+	res.ObjectInfos = objectInfos
+	return nil
+}
+
+func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
 	var (
 		objects []models.Object
 	)
@@ -21,7 +46,7 @@ func (s *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreIn
 			ObjectName: storeInfo.ObjectName,
 			Filename:   storeInfo.Filename,
 			Size:       storeInfo.Size,
-			Status:     0,
+			Status:     1,
 		}
 		objects = append(objects, object)
 	}
