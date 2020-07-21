@@ -2,7 +2,7 @@ package setting
 
 import (
 	"github.com/micro/go-micro/v2/config"
-	log "github.com/micro/go-micro/v2/logger"
+	"github.com/micro/go-micro/v2/util/log"
 	"github.com/wmsx/xconf/pkg/client/source"
 )
 
@@ -34,6 +34,9 @@ func setUpDB(appName, env string) error {
 		log.Error("获取db配置失败")
 		return err
 	}
+
+	log.Info("获取数据库配置: ", DatabaseSetting)
+
 	dbWatcher, err := dbConfig.Watch()
 	if err != nil {
 		log.Error("db配置watch失败")

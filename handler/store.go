@@ -23,7 +23,7 @@ func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
 	objectInfos := make([]*proto.ObjectInfo, 0)
 	for _, object := range objects{
 		objectInfo := &proto.ObjectInfo{
-			Id:         int64(object.ID),
+			Id:         object.ID,
 			Bulk:       object.Bulk,
 			ObjectName: object.ObjectName,
 		}
@@ -35,13 +35,13 @@ func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
 
 func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
 	var (
-		objects []models.Object
+		objects []*models.Object
 	)
 	if len(req.StoreInfos) == 0 {
 		return nil
 	}
 	for _, storeInfo := range req.StoreInfos {
-		object := models.Object{
+		object := &models.Object{
 			Bulk:       storeInfo.BulkName,
 			ObjectName: storeInfo.ObjectName,
 			Filename:   storeInfo.Filename,
@@ -52,11 +52,12 @@ func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreIn
 	}
 
 	if err := models.BatchAddObject(objects); err != nil {
+		log.Error("批量添加Object失败 err", err)
 		return err
 	}
 	name2IdMap := make(map[string]int64)
 	for _, o := range objects {
-		name2IdMap[o.Filename] = int64(o.ID)
+		name2IdMap[o.Filename] = o.ID
 	}
 	res.Name2IdMap = name2IdMap
 	return nil

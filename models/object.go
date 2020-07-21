@@ -1,9 +1,9 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 type Object struct {
-	gorm.Model
+	Model
 	Bulk       string
 	ObjectName string
 	Filename   string
@@ -11,8 +11,8 @@ type Object struct {
 	Status     byte
 }
 
-func BatchAddObject(objects []Object) error  {
-	if len(objects) == 0  {
+func BatchAddObject(objects []*Object) error {
+	if len(objects) == 0 {
 		return nil
 	}
 	return db.Create(&objects).Error
