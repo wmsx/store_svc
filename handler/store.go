@@ -9,11 +9,11 @@ import (
 
 type StoreHandler struct{}
 
-func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
+func (h *StoreHandler) GetByObjectIds(ctx context.Context,
 	req *proto.GetByObjectIdsRequest, res *proto.GetByObjectIdsResponse) error {
 	var (
 		objects []*models.Object
-		err error
+		err     error
 	)
 	if objects, err = models.GetObjectsById(req.ObjectIds); err != nil {
 		log.Error("根据id查询object失败 err: ", err)
@@ -21,7 +21,7 @@ func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
 	}
 
 	objectInfos := make([]*proto.ObjectInfo, 0)
-	for _, object := range objects{
+	for _, object := range objects {
 		objectInfo := &proto.ObjectInfo{
 			Id:         object.ID,
 			Bulk:       object.Bulk,
@@ -33,7 +33,7 @@ func (h *StoreHandler) GetByObjectIds(ctx  context.Context,
 	return nil
 }
 
-func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
+func (h *StoreHandler) BatchSaveStoreInfo(ctx context.Context, req *proto.BatchSaveStoreInfoRequest, res *proto.BatchSaveStoreInfoResponse) error {
 	var (
 		objects []*models.Object
 	)
@@ -60,5 +60,25 @@ func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreIn
 		name2IdMap[o.Filename] = o.ID
 	}
 	res.Name2IdMap = name2IdMap
+	return nil
+}
+
+func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
+	storeInfo := req.StoreInfo
+	object := &models.Object{
+		Bulk:       storeInfo.BulkName,
+		ObjectName: storeInfo.ObjectName,
+		Filename:   storeInfo.Filename,
+		Size:       storeInfo.Size,
+		Status:     1,
+	}
+
+	if err := models.AddObject(object); err != nil {
+		log.Error("批量添加Object失败 err", err)
+		return err
+	}
+
+	res.Name = object.Filename
+	res.Id = object.ID
 	return nil
 }

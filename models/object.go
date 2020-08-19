@@ -11,6 +11,10 @@ type Object struct {
 	Status     byte
 }
 
+func AddObject(object *Object) error {
+	return db.Create(object).Error
+}
+
 func BatchAddObject(objects []*Object) error {
 	if len(objects) == 0 {
 		return nil
