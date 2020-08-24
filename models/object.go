@@ -2,24 +2,19 @@ package models
 
 import "gorm.io/gorm"
 
+
+
 type Object struct {
 	Model
-	Bulk       string
-	ObjectName string
-	Filename   string
-	Size       int64
-	Status     byte
+	Bulk       string `gorm:"not null;type:varchar(32);comment:桶名"`
+	ObjectName string `gorm:"not null;type:varchar(256);comment:对象名"`
+	Filename   string `gorm:"not null;type:varchar(256);comment:文件名"`
+	Size       int64  `gorm:"not null;type:int;comment:大小"`
+	Type       int    `gorm:"not null;type:int;comment:类型"`
 }
 
 func AddObject(object *Object) error {
 	return db.Create(object).Error
-}
-
-func BatchAddObject(objects []*Object) error {
-	if len(objects) == 0 {
-		return nil
-	}
-	return db.Create(&objects).Error
 }
 
 func GetObjectsById(ids []int64) ([]*Object, error) {
@@ -29,5 +24,4 @@ func GetObjectsById(ids []int64) ([]*Object, error) {
 		return nil, err
 	}
 	return objects, nil
-
 }

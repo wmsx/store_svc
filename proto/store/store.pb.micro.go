@@ -35,8 +35,7 @@ var _ server.Option
 
 type StoreService interface {
 	SaveStoreInfo(ctx context.Context, in *SaveStoreInfoRequest, opts ...client.CallOption) (*SaveStoreInfoResponse, error)
-	BatchSaveStoreInfo(ctx context.Context, in *BatchSaveStoreInfoRequest, opts ...client.CallOption) (*BatchSaveStoreInfoResponse, error)
-	GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, opts ...client.CallOption) (*GetByObjectIdsResponse, error)
+	GetByStoreIds(ctx context.Context, in *GetByStoreIdsRequest, opts ...client.CallOption) (*GetByStoreIdsResponse, error)
 }
 
 type storeService struct {
@@ -61,19 +60,9 @@ func (c *storeService) SaveStoreInfo(ctx context.Context, in *SaveStoreInfoReque
 	return out, nil
 }
 
-func (c *storeService) BatchSaveStoreInfo(ctx context.Context, in *BatchSaveStoreInfoRequest, opts ...client.CallOption) (*BatchSaveStoreInfoResponse, error) {
-	req := c.c.NewRequest(c.name, "Store.BatchSaveStoreInfo", in)
-	out := new(BatchSaveStoreInfoResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *storeService) GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, opts ...client.CallOption) (*GetByObjectIdsResponse, error) {
-	req := c.c.NewRequest(c.name, "Store.GetByObjectIds", in)
-	out := new(GetByObjectIdsResponse)
+func (c *storeService) GetByStoreIds(ctx context.Context, in *GetByStoreIdsRequest, opts ...client.CallOption) (*GetByStoreIdsResponse, error) {
+	req := c.c.NewRequest(c.name, "Store.GetByStoreIds", in)
+	out := new(GetByStoreIdsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,15 +74,13 @@ func (c *storeService) GetByObjectIds(ctx context.Context, in *GetByObjectIdsReq
 
 type StoreHandler interface {
 	SaveStoreInfo(context.Context, *SaveStoreInfoRequest, *SaveStoreInfoResponse) error
-	BatchSaveStoreInfo(context.Context, *BatchSaveStoreInfoRequest, *BatchSaveStoreInfoResponse) error
-	GetByObjectIds(context.Context, *GetByObjectIdsRequest, *GetByObjectIdsResponse) error
+	GetByStoreIds(context.Context, *GetByStoreIdsRequest, *GetByStoreIdsResponse) error
 }
 
 func RegisterStoreHandler(s server.Server, hdlr StoreHandler, opts ...server.HandlerOption) error {
 	type store interface {
 		SaveStoreInfo(ctx context.Context, in *SaveStoreInfoRequest, out *SaveStoreInfoResponse) error
-		BatchSaveStoreInfo(ctx context.Context, in *BatchSaveStoreInfoRequest, out *BatchSaveStoreInfoResponse) error
-		GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, out *GetByObjectIdsResponse) error
+		GetByStoreIds(ctx context.Context, in *GetByStoreIdsRequest, out *GetByStoreIdsResponse) error
 	}
 	type Store struct {
 		store
@@ -110,10 +97,6 @@ func (h *storeHandler) SaveStoreInfo(ctx context.Context, in *SaveStoreInfoReque
 	return h.StoreHandler.SaveStoreInfo(ctx, in, out)
 }
 
-func (h *storeHandler) BatchSaveStoreInfo(ctx context.Context, in *BatchSaveStoreInfoRequest, out *BatchSaveStoreInfoResponse) error {
-	return h.StoreHandler.BatchSaveStoreInfo(ctx, in, out)
-}
-
-func (h *storeHandler) GetByObjectIds(ctx context.Context, in *GetByObjectIdsRequest, out *GetByObjectIdsResponse) error {
-	return h.StoreHandler.GetByObjectIds(ctx, in, out)
+func (h *storeHandler) GetByStoreIds(ctx context.Context, in *GetByStoreIdsRequest, out *GetByStoreIdsResponse) error {
+	return h.StoreHandler.GetByStoreIds(ctx, in, out)
 }
