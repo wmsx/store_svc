@@ -10,7 +10,6 @@ type Object struct {
 	ObjectName string `gorm:"not null;type:varchar(256);comment:对象名"`
 	Filename   string `gorm:"not null;type:varchar(256);comment:文件名"`
 	Size       int64  `gorm:"not null;type:int;comment:大小"`
-	Type       int    `gorm:"not null;type:int;comment:类型"`
 }
 
 func AddObject(object *Object) error {

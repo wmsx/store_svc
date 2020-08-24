@@ -31,7 +31,6 @@ message StoreInfo {
     string bulkName = 3;
     string objectName = 4;
     int64 size = 5;
-    int32 type = 6;
 }
 
 message SaveStoreInfoResponse {
