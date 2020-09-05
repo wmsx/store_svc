@@ -29,7 +29,7 @@ func (h *StoreHandler) GetByStoreIds(ctx context.Context,
 		}
 		storeInfos = append(storeInfos, storeInfo)
 	}
-	res.StoreInfo = storeInfos
+	res.StoreInfos = storeInfos
 	return nil
 }
 
