@@ -18,7 +18,7 @@ message GetByStoreIdsRequest {
 }
 
 message GetByStoreIdsResponse {
-    repeated StoreInfo storeInfo = 1;
+    repeated StoreInfo storeInfos = 1;
 }
 
 message SaveStoreInfoRequest {
