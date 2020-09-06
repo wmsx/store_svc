@@ -12,10 +12,10 @@ type StoreHandler struct{}
 func (h *StoreHandler) GetByStoreIds(ctx context.Context,
 	req *proto.GetByStoreIdsRequest, res *proto.GetByStoreIdsResponse) error {
 	var (
-		objects []*models.Object
+		objects []*models.Store
 		err     error
 	)
-	if objects, err = models.GetObjectsById(req.StoreIds); err != nil {
+	if objects, err = models.GetStoresById(req.StoreIds); err != nil {
 		log.Error("根据id查询object失败 err: ", err)
 		return err
 	}
@@ -35,14 +35,14 @@ func (h *StoreHandler) GetByStoreIds(ctx context.Context,
 
 func (h *StoreHandler) SaveStoreInfo(ctx context.Context, req *proto.SaveStoreInfoRequest, res *proto.SaveStoreInfoResponse) error {
 	storeInfo := req.StoreInfo
-	object := &models.Object{
+	object := &models.Store{
 		Bulk:       storeInfo.BulkName,
 		ObjectName: storeInfo.ObjectName,
 		Filename:   storeInfo.Filename,
 		Size:       storeInfo.Size,
 	}
 
-	if err := models.AddObject(object); err != nil {
+	if err := models.AddStore(object); err != nil {
 		log.Error("批量添加Object失败 err", err)
 		return err
 	}
